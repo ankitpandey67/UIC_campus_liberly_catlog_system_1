@@ -1,4 +1,3 @@
-
 import tkinter as tk
 from tkinter import ttk, messagebox
 import json
@@ -6,8 +5,9 @@ from datetime import datetime
 import os
 
 
+# ------------------------
 # Book Classes
-
+# ------------------------
 
 class Book:
     def __init__(self, title, author, genre, available=True, borrowed_on=None, returned_on=None):
@@ -42,20 +42,24 @@ class Book:
         else:
             return Book(data["title"], data["author"], data["genre"], data["available"], data["borrowed_on"], data["returned_on"])
 
+
 class FictionBook(Book):
     def __init__(self, title, author, genre, available=True, borrowed_on=None, returned_on=None):
         super().__init__(title, author, genre, available, borrowed_on, returned_on)
         self.book_type = "Fiction"
+
 
 class NonFictionBook(Book):
     def __init__(self, title, author, genre, available=True, borrowed_on=None, returned_on=None):
         super().__init__(title, author, genre, available, borrowed_on, returned_on)
         self.book_type = "Non-Fiction"
 
+
 class ReferenceBook(Book):
     def __init__(self, title, author, genre, available=True, borrowed_on=None, returned_on=None):
         super().__init__(title, author, genre, available, borrowed_on, returned_on)
         self.book_type = "Reference"
+
 
 # ------------------------
 # Library Catalog with Persistence
@@ -63,8 +67,10 @@ class ReferenceBook(Book):
 
 class LibraryCatalog:
     def __init__(self, filename="library_data.json"):
+        # ✅ Save in same folder as this script
+        self.filename = os.path.join(os.path.dirname(os.path.abspath(__file__)), filename)
+        print(f"[INFO] Library data will be saved at: {self.filename}")
         self.books = []
-        self.filename = filename
         self.load_data()
 
     def add_book(self, book):
@@ -115,6 +121,7 @@ class LibraryCatalog:
                 self.books = [Book.from_dict(b) for b in data]
 
 
+# ------------------------
 # Cyber UI
 # ------------------------
 
@@ -250,7 +257,9 @@ class LibraryUI:
 
     def remove_book(self):
         selected = self.tree.focus()
-        if not selected: messagebox.showwarning("Warning", "Select a book to remove!"); return
+        if not selected:
+            messagebox.showwarning("Warning", "Select a book to remove!")
+            return
         title = self.tree.item(selected, "values")[0]
         if self.catalog.remove_book(title):
             self.update_book_list()
@@ -260,7 +269,9 @@ class LibraryUI:
 
     def borrow_book(self):
         selected = self.tree.focus()
-        if not selected: messagebox.showwarning("Warning", "Select a book to borrow!"); return
+        if not selected:
+            messagebox.showwarning("Warning", "Select a book to borrow!")
+            return
         title = self.tree.item(selected, "values")[0]
         if self.catalog.borrow_book(title):
             self.update_book_list()
@@ -270,13 +281,16 @@ class LibraryUI:
 
     def return_book(self):
         selected = self.tree.focus()
-        if not selected: messagebox.showwarning("Warning", "Select a book to return!"); return
+        if not selected:
+            messagebox.showwarning("Warning", "Select a book to return!")
+            return
         title = self.tree.item(selected, "values")[0]
         if self.catalog.return_book(title):
             self.update_book_list()
             messagebox.showinfo("Returned", f"Book '{title}' returned successfully.")
         else:
             messagebox.showerror("Error", "Book not found!")
+
 
 # ------------------------
 # Run App
